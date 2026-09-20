@@ -186,6 +186,7 @@
             <button data-target="saturno" class="nav-chip text-xs px-3 py-1.5 rounded-xl border border-slate-700/60 text-slate-300 whitespace-nowrap">Saturno</button>
             <button data-target="urano" class="nav-chip text-xs px-3 py-1.5 rounded-xl border border-slate-700/60 text-slate-300 whitespace-nowrap">Urano</button>
             <button data-target="neptuno" class="nav-chip text-xs px-3 py-1.5 rounded-xl border border-slate-700/60 text-slate-300 whitespace-nowrap">Neptuno</button>
+            <button data-target="pluton" class="nav-chip text-xs px-3 py-1.5 rounded-xl border border-slate-700/60 text-slate-300 whitespace-nowrap">Plutón</button>
             <div class="h-4 w-[1px] bg-slate-700 mx-1"></div>
             <button id="btn-reset-view" class="text-xs px-3 py-1.5 rounded-xl bg-blue-600/80 hover:bg-blue-500 text-white font-medium whitespace-nowrap border border-blue-400/40">Vista General</button>
         </div>
@@ -292,6 +293,17 @@
                 temp: "72 K (-201 °C en capa superior de nubes)",
                 atmosphere: "80.0% Hidrógeno, 19.0% Helio, 1.5% Metano",
                 desc: "Neptuno es el planeta más distante del sistema. Presenta un intenso color azul debido a la absorción de frecuencias rojas por parte del metano atmosférico. Registra la mayor velocidad de vientos atmosféricos sostenidos del sistema solar, alcanzando picos superiores a los 2,100 km/h."
+            },
+            pluton: {
+                name: "PLUTÓN",
+                class: "Planeta Enano / Objeto Transneptuniano",
+                mass: "1.303 × 10²² kg (0.0021 M⊕)",
+                diameter: "2,376 km",
+                dist: "39.482 UA (5,906.4 M km)",
+                period: "247.94 años terrestres",
+                temp: "44 K (-229 °C medio en superficie)",
+                atmosphere: "Tenue: Nitrógeno, Metano, Monóxido de Carbono",
+                desc: "Plutón fue considerado el noveno planeta del Sistema Solar desde 1930 hasta 2006. En la XXVI Asamblea General de la Unión Astronómica Internacional (IAU), se fijaron 3 requisitos para ser planeta: 1) Orbitar al Sol, 2) Tener masa suficiente para ser esférico, y 3) Haber despejado la vecindad de su órbita. Plutón no cumple el tercer criterio porque comparte su zona orbital con miles de cuerpos helados del Cinturón de Kuiper, por lo que fue redefinido como planeta enano."
             }
         };
 
@@ -533,6 +545,32 @@
             return new THREE.CanvasTexture(canvas);
         }
 
+        function createPlutoTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512; canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#bfa58a';
+            ctx.fillRect(0, 0, 512, 256);
+
+            // Darker patches & reddish brown regions
+            ctx.fillStyle = '#5c4033';
+            for (let i = 0; i < 40; i++) {
+                ctx.globalAlpha = 0.5;
+                ctx.beginPath();
+                ctx.ellipse(Math.random() * 512, Math.random() * 256, Math.random() * 60 + 15, Math.random() * 40 + 10, Math.random(), 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Bright heart feature (Tombaugh Regio)
+            ctx.fillStyle = '#f0e6d2';
+            ctx.globalAlpha = 0.85;
+            ctx.beginPath();
+            ctx.ellipse(250, 140, 45, 35, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
         // --- THREE.JS SETUP ---
         const container = document.getElementById('webgl-container');
         const scene = new THREE.Scene();
@@ -667,6 +705,14 @@
                 mesh: null,
                 pivot: null,
                 rotSpeed: 0.019
+            },
+            pluton: {
+                radius: 0.8,
+                orbit: 196,
+                speed: 0.0006,
+                mesh: null,
+                pivot: null,
+                rotSpeed: 0.005
             }
         };
 
@@ -700,7 +746,8 @@
                 jupiter: createJupiterTexture(),
                 saturno: createSaturnTexture(),
                 urano: createUranusTexture(),
-                neptuno: createNeptuneTexture()
+                neptuno: createNeptuneTexture(),
+                pluton: createPlutoTexture()
             };
 
             for (const key in bodies) {
